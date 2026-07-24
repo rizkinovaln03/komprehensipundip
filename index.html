@@ -74,7 +74,7 @@
                 htmlHTML += `
                     <div class="item ${tipe}-item">
                         <label for="${safeId}">${item.nama} <span class="badge-target">Tgt: ${item.target}</span></label>
-                        <input type="number" id="${safeId}" class="${tipe}-input" data-nama="${item.nama}" value="0" min="0" max="100" onchange="updateCounter('${tipe}')">
+                        <input type="number" id="${safeId}" class="${tipe}-input" data-nama="${item.nama}" value="0" min="0" max="100" onfocus="if(this.value=='0')this.value='';" onblur="if(this.value=='')this.value='0';" oninput="updateCounter('${tipe}')">
                     </div>
                 `;
             });
