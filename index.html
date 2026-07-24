@@ -85,28 +85,50 @@
         renderList("keterampilan", dataKeterampilan);
 
         function updateCounter(tipe) {
-            let totalIsian = 0;
             let totalCeklis = 0;
+            let totalBobotPersen = 0;
+            let jumlahItemBerTarget = 0;
 
+            // Ambil data acuan berdasarkan tipe
+            const dataArray = tipe === 'penyakit' ? dataPenyakit : dataKeterampilan;
             const inputs = document.querySelectorAll(`.${tipe}-input`);
-            inputs.forEach(inp => {
+
+            inputs.forEach((inp, index) => {
                 let val = parseInt(inp.value) || 0;
+                let targetAsli = dataArray[index].target;
+
                 if (val > 0) {
                     totalCeklis++;
-                    totalIsian += val;
+                }
+
+                // Hanya hitung penyakit/keterampilan yang memang ada targetnya
+                if (targetAsli > 0) {
+                    jumlahItemBerTarget++;
+                    
+                    // RUMUS RAHASIA UNDIP: Syarat tuntas adalah 50% dari target asli (dibulatkan ke atas)
+                    let syaratTuntas = Math.ceil(targetAsli / 2); 
+                    
+                    // Hitung persentase item ini
+                    let capaianItem = (val / syaratTuntas) * 100;
+                    
+                    // Kalau lebih dari 100% (misal target 6 diisi 5), mentokkan di 100% (Ijo Tua)
+                    if (capaianItem > 100) {
+                        capaianItem = 100;
+                    }
+                    
+                    totalBobotPersen += capaianItem;
                 }
             });
 
             document.getElementById(`${tipe}-count`).innerText = `${totalCeklis} Terpilih`;
 
-            let persen = 0;
-            if (tipe === 'penyakit' && totalTargetPenyakit > 0) {
-                persen = (totalIsian / totalTargetPenyakit) * 100;
-                document.getElementById('persen-penyakit').innerText = persen.toFixed(1);
-            } else if (tipe === 'keterampilan' && totalTargetKeterampilan > 0) {
-                persen = (totalIsian / totalTargetKeterampilan) * 100;
-                document.getElementById('persen-keterampilan').innerText = persen.toFixed(1);
+            // Rata-rata persentase seluruh item
+            let persenTotal = 0;
+            if (jumlahItemBerTarget > 0) {
+                persenTotal = totalBobotPersen / jumlahItemBerTarget;
             }
+            
+            document.getElementById(`persen-${tipe}`).innerText = persenTotal.toFixed(1);
         }
 
         function filterList(tipe) {
