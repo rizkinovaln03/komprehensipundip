@@ -36,6 +36,11 @@
     </div>
 
     <div class="card">
+        <h3>📅 Tanggal Pengisian</h3>
+        <input type="date" id="tgl_pengisian" required style="width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fff; color: #000;">
+    </div>
+
+    <div class="card">
         <h3>🦠 Penyakit <span class="badge" id="penyakit-count">0 Terpilih</span></h3>
         <input type="text" id="search-penyakit" class="search-box" placeholder="🔍 Cari penyakit..." onkeyup="filterList('penyakit')">
         <div class="item-list" id="list-penyakit"></div>
@@ -140,9 +145,14 @@
             });
         }
 
-        function kirimDataKeBot() {
+        ffunction kirimDataKeBot() {
             const nama = document.getElementById("dpjp_nama").value.trim();
+            // --- TAMBAHAN: AMBIL TANGGAL DARI FORM ---
+            const tgl = document.getElementById("tgl_pengisian").value; 
+            
             if (!nama) { tg.showAlert("⚠️ Mohon isi Nama DPJP!"); return; }
+            // --- TAMBAHAN: PERINGATAN KALAU TANGGAL KOSONG ---
+            if (!tgl) { tg.showAlert("⚠️ Mohon isi Tanggal Pengisian!"); return; }
 
             const p = [];
             document.querySelectorAll('.penyakit-input').forEach(inp => {
@@ -160,6 +170,7 @@
 
             tg.sendData(JSON.stringify({ 
                 dpjp: nama, 
+                tanggal: tgl, // <--- TAMBAHAN: KIRIM DATA TANGGAL KE BOT
                 penyakit: p, 
                 keterampilan: k,
                 est_penyakit: document.getElementById('persen-penyakit').innerText,
