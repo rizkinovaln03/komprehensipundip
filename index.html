@@ -29,6 +29,20 @@
         Penyakit: <span id="persen-penyakit">0.0</span>% | Keterampilan: <span id="persen-keterampilan">0.0</span>%
     </div>
 
+    <div class="est-box">
+        📊 Estimasi Real-Time: <br>
+        Penyakit: <span id="persen-penyakit">0.0</span>% | Keterampilan: <span id="persen-keterampilan">0.0</span>%
+    </div>
+
+    <!-- ⚡ TOMBOL AUTO-FILL OTOMATIS -->
+    <div class="card" style="text-align: center; background: #e7f1ff !important; border: 1px solid #b8daff;">
+        <h3 style="color: #004085 !important; justify-content: center;">⚡ Generator Auto-Fill Cepat</h3>
+        <p style="font-size: 13px; margin-bottom: 10px; color: #333;">Mau instan? Pilih target persentase, biarkan sistem yang mengisinya!</p>
+        <button type="button" onclick="autoFillTarget(90)" style="background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 3px;">Isi Otomatis 90%</button>
+        <button type="button" onclick="autoFillTarget(100)" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 3px;">Isi Otomatis 100%</button>
+        <button type="button" onclick="resetForm()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 3px;">Reset 0%</button>
+    </div>
+
     <div class="card">
         <h3>👨‍⚕️ Data DPJP</h3>
         <label style="color:#000 !important;">Nama DPJP (ga harus lengkap):</label>
@@ -168,5 +182,50 @@
             }));
         }
     </script>
+    // ⚡ FUNGSI AUTO-FILL OTOMATIS BERDASARKAN TARGET
+        function autoFillTarget(targetPersen) {
+            // Isi Penyakit
+            const inputsPenyakit = document.querySelectorAll('.penyakit-input');
+            inputsPenyakit.forEach((inp, index) => {
+                let targetAsli = dataPenyakit[index].target;
+                if (targetAsli > 0) {
+                    // Hitung jumlah yang diperlukan untuk mencapai target tuntas
+                    let syaratTuntas = Math.ceil(targetAsli / 2);
+                    // Kalau target 90/100%, kita kasih nilai sesuai syarat tuntasnya
+                    let nilaiIsi = targetPersen >= 90 ? syaratTuntas : Math.floor(syaratTuntas * (targetPersen / 100));
+                    inp.value = nilaiIsi > 0 ? nilaiIsi : 1;
+                } else {
+                    inp.value = 0; // Penyakit yang targetnya 0 dibiarkan 0
+                }
+            });
+
+            // Isi Keterampilan
+            const inputsKeterampilan = document.querySelectorAll('.keterampilan-input');
+            inputsKeterampilan.forEach((inp, index) => {
+                let targetAsli = dataKeterampilan[index].target;
+                if (targetAsli > 0) {
+                    let syaratTuntas = Math.ceil(targetAsli / 2);
+                    let nilaiIsi = targetPersen >= 90 ? syaratTuntas : Math.floor(syaratTuntas * (targetPersen / 100));
+                    inp.value = nilaiIsi > 0 ? nilaiIsi : 1;
+                } else {
+                    inp.value = 0;
+                }
+            });
+
+            // Update hitungan layarnya secara real-time
+            updateCounter('penyakit');
+            updateCounter('keterampilan');
+            tg. HapticFeedback.notificationOccurred('success');
+        }
+
+        // 🔄 FUNGSI RESET FORM JADI 0 SEMUA
+        function resetForm() {
+            document.querySelectorAll('.penyakit-input, .keterampilan-input').forEach(inp => {
+                inp.value = 0;
+            });
+            updateCounter('penyakit');
+            updateCounter('keterampilan');
+            tg.HapticFeedback.notificationOccurred('warning');
+        }
 </body>
 </html>
