@@ -213,28 +213,31 @@
             if (!nama) { tg.showAlert("⚠️ Mohon isi Nama DPJP!"); return; }
             if (!tgl) { tg.showAlert("⚠️ Mohon isi Tanggal Pengisian!"); return; }
 
+            // KOMPRESI: Kita cuma kirim urutan ID-nya, bukan teks nama yang panjang
             const p = [];
-            document.querySelectorAll('.penyakit-input').forEach(inp => {
+            document.querySelectorAll('.penyakit-input').forEach((inp, index) => {
                 let val = parseInt(inp.value) || 0;
-                if(val > 0) p.push({ nama: inp.getAttribute('data-nama'), qty: val });
+                if(val > 0) p.push({ id: index, qty: val }); 
             });
 
             const k = [];
-            document.querySelectorAll('.keterampilan-input').forEach(inp => {
+            document.querySelectorAll('.keterampilan-input').forEach((inp, index) => {
                 let val = parseInt(inp.value) || 0;
-                if(val > 0) k.push({ nama: inp.getAttribute('data-nama'), qty: val });
+                if(val > 0) k.push({ id: index, qty: val });
             });
 
             if (p.length === 0 && k.length === 0) { tg.showAlert("⚠️ Isi jumlah angka minimal di 1 Penyakit / Keterampilan!"); return; }
 
-            tg.sendData(JSON.stringify({ 
+            // Payload sekarang ukurannya sangat kecil, dijamin lolos limit Telegram!
+            const payload = JSON.stringify({ 
                 dpjp: nama, 
                 tanggal: tgl,
-                penyakit: p, 
-                keterampilan: k,
+                p_idx: p,  
+                k_idx: k,  
                 est_penyakit: document.getElementById('persen-penyakit').innerText,
                 est_keterampilan: document.getElementById('persen-keterampilan').innerText
-            }));
+            });
+            tg.sendData(payload);
         }
     </script>
 </body>
