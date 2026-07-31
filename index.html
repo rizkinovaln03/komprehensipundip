@@ -213,30 +213,37 @@
             if (!nama) { tg.showAlert("⚠️ Mohon isi Nama DPJP!"); return; }
             if (!tgl) { tg.showAlert("⚠️ Mohon isi Tanggal Pengisian!"); return; }
 
-            // KOMPRESI: Kita cuma kirim urutan ID-nya, bukan teks nama yang panjang
-            const p = [];
-            document.querySelectorAll('.penyakit-input').forEach((inp, index) => {
-                let val = parseInt(inp.value) || 0;
-                if(val > 0) p.push({ id: index, qty: val }); 
+            // KOMPRESI EXTREME: Cuma ngirim barisan angka.
+            let p_arr = [];
+            let p_has_data = false;
+            document.querySelectorAll('.penyakit-input').forEach(inp => {
+                let v = parseInt(inp.value) || 0;
+                p_arr.push(v);
+                if (v > 0) p_has_data = true;
             });
 
-            const k = [];
-            document.querySelectorAll('.keterampilan-input').forEach((inp, index) => {
-                let val = parseInt(inp.value) || 0;
-                if(val > 0) k.push({ id: index, qty: val });
+            let k_arr = [];
+            let k_has_data = false;
+            document.querySelectorAll('.keterampilan-input').forEach(inp => {
+                let v = parseInt(inp.value) || 0;
+                k_arr.push(v);
+                if (v > 0) k_has_data = true;
             });
 
-            if (p.length === 0 && k.length === 0) { tg.showAlert("⚠️ Isi jumlah angka minimal di 1 Penyakit / Keterampilan!"); return; }
+            if (!p_has_data && !k_has_data) { 
+                tg.showAlert("⚠️ Isi jumlah angka minimal di 1 Penyakit / Keterampilan!"); 
+                return; 
+            }
 
-            // Payload sekarang ukurannya sangat kecil, dijamin lolos limit Telegram!
             const payload = JSON.stringify({ 
                 dpjp: nama, 
                 tanggal: tgl,
-                p_idx: p,  
-                k_idx: k,  
+                p_str: p_arr.join(','),  // Menyatukan angka pakai koma
+                k_str: k_arr.join(','),
                 est_penyakit: document.getElementById('persen-penyakit').innerText,
                 est_keterampilan: document.getElementById('persen-keterampilan').innerText
             });
+
             tg.sendData(payload);
         }
     </script>
